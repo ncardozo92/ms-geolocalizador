@@ -2,6 +2,7 @@ package com.ncardozo.msgeolocalizador.service
 
 import com.ncardozo.msgeolocalizador.client.RestClientGeolocation
 import com.ncardozo.msgeolocalizador.dto.ResponseDto
+import com.ncardozo.msgeolocalizador.dto.TimeZoneDto
 import com.ncardozo.msgeolocalizador.dto.external.IpLocationDto
 import com.ncardozo.msgeolocalizador.dto.external.LanguageDto
 import com.ncardozo.msgeolocalizador.dto.external.LocationDto
@@ -41,6 +42,9 @@ class IpLocationServiceTest extends Specification{
         responseDto.countryName == ipLocationDto.countryName
         responseDto.distance != null
         responseDto.languages == languages
+        responseDto.currency == "ARS"
+        responseDto.timeZones == [new TimeZoneDto("UTC-03:00")]
+        //FIXER_ACCESS_KEY
     }
 
     def "Si se recibe una excepción al consulta la geolocalización de la IP, la propagamos"(){

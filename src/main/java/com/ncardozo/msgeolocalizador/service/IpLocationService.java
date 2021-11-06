@@ -2,15 +2,20 @@ package com.ncardozo.msgeolocalizador.service;
 
 import com.ncardozo.msgeolocalizador.client.RestClientGeolocation;
 import com.ncardozo.msgeolocalizador.dto.ResponseDto;
+import com.ncardozo.msgeolocalizador.dto.TimeZoneDto;
 import com.ncardozo.msgeolocalizador.dto.external.IpLocationDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.util.List;
 
 @Service
 public class IpLocationService {
+
+    private static final String ARGENTINA_CODE = "AR";
 
     @Autowired
     private RestClientGeolocation restClientGeolocation;
@@ -32,7 +37,19 @@ public class IpLocationService {
         responseDto.setLanguages(ipLocationDto.getLanguages());
         responseDto.setDate(LocalDateTime.now().toString());
 
+        setCurrency(responseDto);
+        setTimeZones(responseDto);
+
         return responseDto;
+    }
+
+    /**
+     * debido a que la Rest Countries restringe el acceso a los usos horarios de un país, se mockean los mismos
+     */
+    private void setTimeZones(ResponseDto dto) {
+        dto.setTimeZones(ARGENTINA_CODE.equals(dto.getCountryCode()) ?
+                List.of(new TimeZoneDto("UTC" + OffsetDateTime.now().getOffset().toString())) :
+                List.of(new TimeZoneDto("UTC-04:00"), new TimeZoneDto("UTC-05:00")));
     }
 
     private double calculateDistance(Double destinationLatitude, Double destinationLongitude) {
@@ -49,5 +66,12 @@ public class IpLocationService {
         distance = Math.pow(distance, 2);
 
         return Math.round(Math.sqrt(distance));
+    }
+
+    /**
+     * debido a que la Rest Countries restringe el acceso a las monedas de un país, se mockean las mismas
+     */
+    private  void setCurrency(ResponseDto dto){
+        dto.setCurrency(ARGENTINA_CODE.equals(dto.getCountryCode()) ? "ARS" : "USD");
     }
 }

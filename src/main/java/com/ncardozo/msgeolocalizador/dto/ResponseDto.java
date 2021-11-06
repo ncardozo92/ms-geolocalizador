@@ -16,4 +16,6 @@ public class ResponseDto {
     private Double distance;
     private List<LanguageDto> languages;
     private String date;
+    private String currency;
+    private List<TimeZoneDto> timeZones;
 }
